@@ -51,14 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private HeaderFragmentAdapter headerFragmentAdapter;
     private ViewPager mViewPager;
 
-    private RequestQueue mRequestQueue;
+    private NetworkUtils mNetworkUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRequestQueue = Volley.newRequestQueue(this);
+        mNetworkUtils = NetworkUtils.getInstance(this);
 
         mViewPager = findViewById(R.id.viewpager);
         headerFragmentAdapter = new HeaderFragmentAdapter(getSupportFragmentManager());
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-        mRequestQueue.add(weatherRequest);
+        mNetworkUtils.addToRequestQueue(weatherRequest);
     }
 
     class HeaderFragmentAdapter extends FragmentPagerAdapter{

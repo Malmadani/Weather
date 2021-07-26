@@ -9,6 +9,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 import com.example.weather.R;
@@ -52,7 +53,7 @@ public class NetworkUtils {
     public static NetworkUtils getInstance(Context context){
         if (sInstane == null){
             synchronized (LOCK){
-                if (sInstane == null) sInstane = new NetworkUtils();
+                if (sInstane == null) sInstane = new NetworkUtils(context);
             }
         }
         return sInstane;
@@ -63,6 +64,10 @@ public class NetworkUtils {
             mRequestQueue = new Volley().newRequestQueue(mContext);
         }
         return mRequestQueue;
+    }
+
+    public <T> void  addToRequestQueue(Request<T> request){
+        getRequestQueue().add(request);
     }
 
     private NetworkUtils(Context context){
@@ -99,6 +104,9 @@ public class NetworkUtils {
         }
     }
 
+    /**
+    //طلب الاتصال بالأنترنت باستخدام كلاس Http Url Connection
+
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection httpURLConnection = (HttpsURLConnection) url.openConnection();
         httpURLConnection.setRequestMethod("GET");
@@ -120,4 +128,5 @@ public class NetworkUtils {
             httpURLConnection.disconnect();
         }
     }
+     */
 }
