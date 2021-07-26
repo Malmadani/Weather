@@ -1,0 +1,108 @@
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="app_name">weather</string>
+
+    <string name="pref_location_default">Ankara </string>
+
+    <string name="api_key">9ff3e0ba8e51ef8c8861e95c8b7cca18</string>
+
+
+    <!-- - - - - - - - - - - - - - - - -
+ - Used by WeatherUtils           -
+ - - - - - - - - - - - - - - - - -->
+
+    <!-- HighLow Temperature format -->
+    <string name="high_low_temperature1">
+   <xliff:g id="high_temp">%1$1.0f</xliff:g>\u00B0 /
+   <xliff:g id="low_temp">%2$1.0f</xliff:g>\u00B0
+</string>
+
+    <!-- Temperature format -->
+    <string name="format_temperature1">
+   <xliff:g id="temp">%1.0f</xliff:g>\u00B0
+</string>
+
+    <!-- Wind in kph -->
+    <string name="format_wind_kmh1">
+   <xliff:g id="speed">%1$1.0f</xliff:g> km/h
+   <xliff:g id="direction">%2$s</xliff:g>
+</string>
+
+    <!-- Wind in mph -->
+    <string name="format_wind_mph1">
+   <xliff:g id="speed">%1$1.0f</xliff:g> mph
+   <xliff:g id="direction">%2$s</xliff:g>
+</string>
+
+    <!-- Pressure format -->
+    <string name="format_pressure1">
+   <xliff:g id="pressure">%1.0f</xliff:g> hPa
+</string>
+
+    <!-- Humidity format -->
+    <string name="format_humidity1">
+   <xliff:g id="humidity">%1.0f</xliff:g> %%
+</string>
+
+    <!-- - - - - - - - - - - - - - - - -
+     - Wind Directions                -
+     - - - - - - - - - - - - - - - - -->
+    <string name="unknown_direction">Unknown Direction</string>
+    <string name="north">N</string>
+    <string name="east">E</string>
+    <string name="west">W</string>
+    <string name="south">S</string>
+    <string name="north_east">NE</string>
+    <string name="south_east">SE</string>
+    <string name="north_west">NW</string>
+    <string name="south_west">NE</string>
+
+    <!-- - - - - - - - - - - - - - -
+     - Used by CustomDateUtils          -
+     - - - - - - - - - - - - - - -->
+
+    <!-- For labelling today -->
+    <string name="today">Today</string>
+
+    <!-- For labelling tomorrow -->
+    <string name="tomorrow">Tomorrow</string>
+
+
+
+    <!-- - - - - - - - - - - - - - - - -
+     - Used by WeatherUtils           -
+     - - - - - - - - - - - - - - - - -->
+
+    <!-- HighLow Temperature format -->
+    <string name="high_low_temperature">
+   <xliff:g id="high_temp">%1$1.0f</xliff:g>\u00B0 /
+   <xliff:g id="low_temp">%2$1.0f</xliff:g>\u00B0
+</string>
+
+    <!-- Temperature format -->
+    <string name="format_temperature">
+   <xliff:g id="temp">%1.0f</xliff:g>\u00B0
+</string>
+
+    <!-- Wind in kph -->
+    <string name="format_wind_kmh">
+   <xliff:g id="speed">%1$1.0f</xliff:g> كم/س
+   <xliff:g id="direction">%2$s</xliff:g>
+</string>
+
+    <!-- Wind in mph -->
+    <string name="format_wind_mph">
+   <xliff:g id="speed">%1$1.0f</xliff:g> م/س
+   <xliff:g id="direction">%2$s</xliff:g>
+</string>
+
+    <!-- Pressure format -->
+    <string name="format_pressure">
+   <xliff:g id="pressure">%1.0f</xliff:g> هكتوبسكال
+</string>
+
+    <!-- Humidity format -->
+    <string name="format_humidity">
+   <xliff:g id="humidity">%1.0f</xliff:g> %%
+</string>
+
+</resources>

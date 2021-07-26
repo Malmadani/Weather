@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="50dp"
+    android:paddingBottom="8dp"
+    tools:showIn="@layout/activity_main">
+
+    <TextView
+        android:id="@+id/wind_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:padding="10dp"
+        android:text="Wind"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_normal_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/pressure_icon"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="spread" />
+
+    <TextView
+        android:id="@+id/pressure_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:padding="10dp"
+        android:text="Pressure"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_normal_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/humidity_icon"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/wind_icon" />
+
+    <TextView
+        android:id="@+id/humidity_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:padding="10dp"
+        android:text="Humidity"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_normal_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/pressure_icon" />
+
+
+    <TextView
+        android:id="@+id/pressure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="4 km/h NW"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_normal_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/humidity"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/wind" />
+
+    <TextView
+        android:id="@+id/wind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="996 hPa"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_normal_text_size"
+        app:layout_constraintBottom_toTopOf="@+id/pressure"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="80 %"
+        android:textColor="@color/white"
+        android:textSize="@dimen/primary_normal_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        app:layout_constraintTop_toBottomOf="@+id/pressure" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.40" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
