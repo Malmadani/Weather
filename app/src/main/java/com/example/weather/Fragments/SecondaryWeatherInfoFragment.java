@@ -46,22 +46,22 @@ public class SecondaryWeatherInfoFragment extends Fragment {
         showWeatherInfo();
     }
 
-    public void ubdateWeatherInfo(WeatherInfo weatherInfo){
+    public void ubdateWeatherInfo(WeatherInfo weatherInfo) {
         mWeatherInfo = weatherInfo;
         showWeatherInfo();
     }
 
     private void showWeatherInfo() {
 
-        if (mWeatherInfo == null){
+        if (mWeatherInfo == null) {
             return;
         }
 
-        String pressure = mWeatherInfo.getMain().getPressure()+"";
+        String pressure = mWeatherInfo.getMain().getPressure() + "";
 
         mPressure.setText(pressure);
 
-        String humidity = mWeatherInfo.getMain().getHumidity()+"";
+        String humidity = mWeatherInfo.getMain().getHumidity() + "";
 
         mHumidity.setText(humidity);
     }

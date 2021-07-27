@@ -23,16 +23,16 @@
                 android:id="@+id/viewpager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginBottom="16dp" />
 
             <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tablayout"
                 android:layout_width="match_parent"
                 android:layout_height="16dp"
                 android:layout_gravity="bottom"
+                app:tabBackground="@drawable/selector_pager_indicator"
                 app:tabGravity="center"
-                app:tabIndicatorHeight="0dp"
-                app:tabBackground="@drawable/selector_pager_indicator"/>
+                app:tabIndicatorHeight="0dp" />
         </FrameLayout>
 
         <!-- RecyclerView with horizontal orientation to show next 24 hours forecasts -->

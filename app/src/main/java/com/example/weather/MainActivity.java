@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     private NetworkUtils mNetworkUtils;
 
-    private static final String  TAG = MainActivity.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,15 +108,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.settings){
+        if (item.getItemId() == R.id.settings) {
             startActivity(new Intent(getBaseContext(), SettingsActivity.class));
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void requestWeatherInfo(){
+    private void requestWeatherInfo() {
 
-        String  weatherRequestUrl = NetworkUtils.getWeatherUrl(MainActivity.this).toString();
+        String weatherRequestUrl = NetworkUtils.getWeatherUrl(MainActivity.this).toString();
 
         JsonObjectRequest weatherRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -130,10 +130,10 @@ public class MainActivity extends AppCompatActivity {
                         try {
                             weatherInfo = OpenWeatherDataParser.getWeatherInfoObjectFormJson(response);
 
-                        }catch (JSONException e){
+                        } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        if (weatherInfo != null){
+                        if (weatherInfo != null) {
                             headerFragmentAdapter.ubdateData(weatherInfo);
                         }
                     }
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
         mNetworkUtils.addToRequestQueue(weatherRequest);
     }
 
-    private void requestForecastInfo(){
+    private void requestForecastInfo() {
         // The getForecastsUrl method will return the URL that we need to get the JSON for the upcoming forecasts
         String forecastsRequestUrl = NetworkUtils.getForecastUrl(MainActivity.this).toString();
 
@@ -192,40 +192,37 @@ public class MainActivity extends AppCompatActivity {
     /**
      * أنشاء دالة لتنفيذ الAsyncTask
      *
-            public void requestWeatherInfo(){
-                new getRequestWeatherInfoFormUrl.execute();
-            }
-    **/
+     public void requestWeatherInfo(){
+     new getRequestWeatherInfoFormUrl.execute();
+     }
+     **/
 
     /**
      * أستخراج البيانات وتخزينها في كلاس WeatherInfo
+     * <p>
+     * class  getRequestWeatherInfoFormUrl extends AsyncTask<Void, Integer, WeatherInfo>{
      *
-                    class  getRequestWeatherInfoFormUrl extends AsyncTask<Void, Integer, WeatherInfo>{
+     * @Override protected WeatherInfo doInBackground(Void... voids) {
+     * URL weatherURL = NetworkUtils.getWeatherUrl(getBaseContext());
+     * WeatherInfo weatherInfo;
+     * try {
+     * String weatherJsonResponse = NetworkUtils.getResponseFromHttpUrl(weatherURL);
+     * weatherInfo = OpenWeatherDataParser.getWeatherInfoObjectFormJson(weatherJsonResponse);
+     * return weatherInfo;
+     * }catch (IOException | JSONException e){
+     * e.printStackTrace();
+     * }
+     * return null;
+     * }
+     * @Override protected void onPostExecute(WeatherInfo weatherInfo) {
+     * super.onPostExecute(weatherInfo);
+     * if (weatherInfo != null){
+     * headerFragmentAdapter.ubdateData(weatherInfo);
+     * }
+     * }
+     **/
 
-                        @Override
-                        protected WeatherInfo doInBackground(Void... voids) {
-                            URL weatherURL = NetworkUtils.getWeatherUrl(getBaseContext());
-                            WeatherInfo weatherInfo;
-                            try {
-                                String weatherJsonResponse = NetworkUtils.getResponseFromHttpUrl(weatherURL);
-                                weatherInfo = OpenWeatherDataParser.getWeatherInfoObjectFormJson(weatherJsonResponse);
-                                return weatherInfo;
-                            }catch (IOException | JSONException e){
-                                e.printStackTrace();
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(WeatherInfo weatherInfo) {
-                            super.onPostExecute(weatherInfo);
-                            if (weatherInfo != null){
-                                headerFragmentAdapter.ubdateData(weatherInfo);
-                            }
-                        }
-    **/
-
-    class HeaderFragmentAdapter extends FragmentPagerAdapter{
+    class HeaderFragmentAdapter extends FragmentPagerAdapter {
 
         List<Fragment> fragments;
 
@@ -238,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Fragment getItem(int position) {
-            switch (position){
+            switch (position) {
                 case 0:
                     return new PrimaryWeatherInfoFragmnet();
 
@@ -261,9 +258,9 @@ public class MainActivity extends AppCompatActivity {
             return fragment;
         }
 
-        void ubdateData(WeatherInfo weatherInfo){
-            ((PrimaryWeatherInfoFragmnet)fragments.get(0)).ubdateWeatherInfo(weatherInfo);
-            ((SecondaryWeatherInfoFragment)fragments.get(1)).ubdateWeatherInfo(weatherInfo);
+        void ubdateData(WeatherInfo weatherInfo) {
+            ((PrimaryWeatherInfoFragmnet) fragments.get(0)).ubdateWeatherInfo(weatherInfo);
+            ((SecondaryWeatherInfoFragment) fragments.get(1)).ubdateWeatherInfo(weatherInfo);
         }
     }
 }

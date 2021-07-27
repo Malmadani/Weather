@@ -115,7 +115,7 @@ public class OpenWeatherDataParser {
         String currentDay = df.format(new Date());
         int hoursForecastsCount = 0;
 
-        for (int i=0; i<jsonForecastsArray.length(); i++){
+        for (int i = 0; i < jsonForecastsArray.length(); i++) {
 
             JSONObject singleForecastJson = jsonForecastsArray.getJSONObject(i);
 
@@ -167,6 +167,7 @@ public class OpenWeatherDataParser {
                 }
             }
         }
+
         ForecastLists forecastsData = new ForecastLists();
         forecastsData.setHoursForecasts(hoursForecasts);
         List<List<Forecast>> listOfDaysForecasts = new ArrayList<>();

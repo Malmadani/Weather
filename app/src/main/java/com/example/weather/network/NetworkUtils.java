@@ -40,31 +40,31 @@ public class NetworkUtils {
 
     private RequestQueue mRequestQueue;
 
-    public static NetworkUtils getInstance(Context context){
-        if (sInstane == null){
-            synchronized (LOCK){
+    public static NetworkUtils getInstance(Context context) {
+        if (sInstane == null) {
+            synchronized (LOCK) {
                 if (sInstane == null) sInstane = new NetworkUtils(context);
             }
         }
         return sInstane;
     }
 
-    public RequestQueue getRequestQueue(){
-        if (mRequestQueue == null){
+    public RequestQueue getRequestQueue() {
+        if (mRequestQueue == null) {
             mRequestQueue = new Volley().newRequestQueue(mContext);
         }
         return mRequestQueue;
     }
 
-    public <T> void  addToRequestQueue(Request<T> request){
+    public <T> void addToRequestQueue(Request<T> request) {
         getRequestQueue().add(request);
     }
 
-    public void cancelRequests(String tag){
+    public void cancelRequests(String tag) {
         getRequestQueue().cancelAll(tag);
     }
 
-    private NetworkUtils(Context context){
+    private NetworkUtils(Context context) {
         mContext = context.getApplicationContext();
         mRequestQueue = getRequestQueue();
     }
@@ -99,28 +99,28 @@ public class NetworkUtils {
     }
 
     /**
-    //طلب الاتصال بالأنترنت باستخدام كلاس Http Url Connection
+     //طلب الاتصال بالأنترنت باستخدام كلاس Http Url Connection
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
-        HttpURLConnection httpURLConnection = (HttpsURLConnection) url.openConnection();
-        httpURLConnection.setRequestMethod("GET");
-        httpURLConnection.connect();
-        try {
-            InputStream inputStream = httpURLConnection.getInputStream();
-            Scanner input = new Scanner(inputStream);
-            input.useDelimiter("\\A");
-            boolean hasInput = input.hasNext();
-            String response = null;
-            if (hasInput) {
-                response = input.next();
-            }
-            input.close();
-            Log.d(TAG, response);
-            return response;
+     public static String getResponseFromHttpUrl(URL url) throws IOException {
+     HttpURLConnection httpURLConnection = (HttpsURLConnection) url.openConnection();
+     httpURLConnection.setRequestMethod("GET");
+     httpURLConnection.connect();
+     try {
+     InputStream inputStream = httpURLConnection.getInputStream();
+     Scanner input = new Scanner(inputStream);
+     input.useDelimiter("\\A");
+     boolean hasInput = input.hasNext();
+     String response = null;
+     if (hasInput) {
+     response = input.next();
+     }
+     input.close();
+     Log.d(TAG, response);
+     return response;
 
-        } finally {
-            httpURLConnection.disconnect();
-        }
-    }
+     } finally {
+     httpURLConnection.disconnect();
+     }
+     }
      */
 }
