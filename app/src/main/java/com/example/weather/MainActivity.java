@@ -9,11 +9,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.graphics.LinearGradient;
+import android.media.audiofx.EnvironmentalReverb;
 import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -92,6 +97,21 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
 
         mNetworkUtils.cancelRequests(TAG);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.settings){
+            startActivity(new Intent(getBaseContext(), SettingsActivity.class));
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void requestWeatherInfo(){

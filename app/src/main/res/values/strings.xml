@@ -5,44 +5,6 @@
 
     <string name="api_key">9ff3e0ba8e51ef8c8861e95c8b7cca18</string>
 
-
-    <!-- - - - - - - - - - - - - - - - -
- - Used by WeatherUtils           -
- - - - - - - - - - - - - - - - - -->
-
-    <!-- HighLow Temperature format -->
-    <string name="high_low_temperature1">
-   <xliff:g id="high_temp">%1$1.0f</xliff:g>\u00B0 /
-   <xliff:g id="low_temp">%2$1.0f</xliff:g>\u00B0
-</string>
-
-    <!-- Temperature format -->
-    <string name="format_temperature1">
-   <xliff:g id="temp">%1.0f</xliff:g>\u00B0
-</string>
-
-    <!-- Wind in kph -->
-    <string name="format_wind_kmh1">
-   <xliff:g id="speed">%1$1.0f</xliff:g> km/h
-   <xliff:g id="direction">%2$s</xliff:g>
-</string>
-
-    <!-- Wind in mph -->
-    <string name="format_wind_mph1">
-   <xliff:g id="speed">%1$1.0f</xliff:g> mph
-   <xliff:g id="direction">%2$s</xliff:g>
-</string>
-
-    <!-- Pressure format -->
-    <string name="format_pressure1">
-   <xliff:g id="pressure">%1.0f</xliff:g> hPa
-</string>
-
-    <!-- Humidity format -->
-    <string name="format_humidity1">
-   <xliff:g id="humidity">%1.0f</xliff:g> %%
-</string>
-
     <!-- - - - - - - - - - - - - - - - -
      - Wind Directions                -
      - - - - - - - - - - - - - - - - -->
@@ -104,4 +66,13 @@
    <xliff:g id="humidity">%1.0f</xliff:g> %%
 </string>
 
+    <string name="action_settings">settings</string>
+    <string name="pref_location_key">location</string>
+    <string name="pref_location_label">Location</string>
+    <string name="pref_unit_metric">metric</string>
+    <string name="pref_units_key">units</string>
+    <string name="pref_units_label">Mesurement System</string>
+    <string name="pref_label_metric">Metric</string>
+    <string name="pref_label_imperial">Imperial</string>
+    <string name="pref_unit_imperial">imperial</string>
 </resources>
