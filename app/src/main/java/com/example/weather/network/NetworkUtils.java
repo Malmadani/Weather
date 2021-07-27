@@ -1,28 +1,18 @@
 package com.example.weather.network;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.weather.R;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Locale;
-import java.util.Scanner;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class NetworkUtils {
 
@@ -68,6 +58,10 @@ public class NetworkUtils {
 
     public <T> void  addToRequestQueue(Request<T> request){
         getRequestQueue().add(request);
+    }
+
+    public void cancelRequests(String tag){
+        getRequestQueue().cancelAll(tag);
     }
 
     private NetworkUtils(Context context){

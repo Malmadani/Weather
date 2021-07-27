@@ -12,13 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weather.R;
 import com.example.weather.entity.Forecast;
+import com.example.weather.utils.CustomDateUtils;
+import com.example.weather.utils.WeatherUtils;
 
 import java.util.List;
 
 public class DaysForecastAdapter extends RecyclerView.Adapter<DaysForecastAdapter.DaysForecastViewHolder> {
 
     private Context mContext;
-    private List<Forecast> mForecast;
+    private List<List<Forecast>> mForecast;
 
     public DaysForecastAdapter(Context mContext) {
         this.mContext = mContext;
@@ -33,11 +35,55 @@ public class DaysForecastAdapter extends RecyclerView.Adapter<DaysForecastAdapte
 
     @Override
     public void onBindViewHolder(@NonNull DaysForecastAdapter.DaysForecastViewHolder holder, int position) {
-        holder.weatherIcone.setImageResource(R.drawable.ic_clear_sky);
-        holder.date.setText("Today, April 03");
-        holder.weatherDescription.setText("Cloudy");
-        holder.highTemperature.setText("19°");
-        holder.lowTemperature.setText("10°");
+        Forecast forecast = mForecast.get(position).get(0);
+
+        /* Weather Icon ************************************************************************* */
+
+        // Get the weather icon resource id based on icon string passed from the api
+        int weatherImageId = WeatherUtils.getWeatherIcon(forecast.getWeathers().get(0).getIcon());
+
+        // Display weather condition icon
+        holder.weatherIcone.setImageResource(weatherImageId);
+
+        /* Weather Date ************************************************************************* */
+
+        // Get human readable string using getFriendlyDateString utility method and display it
+        String dateString = CustomDateUtils.getFriendlyDateString(mContext, forecast.getDt(), false);
+
+        /* Display friendly date string */
+        holder.date.setText(dateString);
+
+        /* Weather Description ****************************************************************** */
+
+        // Get weather condition description
+        String description = forecast.getWeathers().get(0).getDescription();
+
+        // Display weather description
+        holder.weatherDescription.setText(description);
+
+
+        /* High (max) temperature *************************************************************** */
+
+        // Read high temperature from forecast object
+        double highTemperature = forecast.getMain().getTempMax();
+
+        // Get formatted high temperature string
+        String highTemperatureString = mContext.getString(R.string.format_temperature, highTemperature);
+
+        // Display high temperature
+        holder.highTemperature.setText(highTemperatureString);
+
+
+        /* Low (min) temperature **************************************************************** */
+
+        // Read low temperature from forecast object
+        double lowTemperature = forecast.getMain().getTempMin();
+
+        // Get formatted low temperature string
+        String lowTemperatureString = mContext.getString(R.string.format_temperature, lowTemperature);
+
+        // Display low temperature
+        holder.lowTemperature.setText(lowTemperatureString);
 
     }
 
@@ -69,8 +115,8 @@ public class DaysForecastAdapter extends RecyclerView.Adapter<DaysForecastAdapte
         }
     }
 
-    public void updateData(List<Forecast> forecasts) {
-        mForecast = forecasts;
+    public void updateData(List<List<Forecast>> forecasts) {
+        this.mForecast = forecasts;
         notifyDataSetChanged();
     }
 }

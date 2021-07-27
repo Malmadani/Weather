@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.weather.R;
 import com.example.weather.entity.Forecast;
+import com.example.weather.network.NetworkUtils;
+import com.example.weather.utils.CustomDateUtils;
+import com.example.weather.utils.WeatherUtils;
 
 import java.util.List;
 
@@ -33,11 +36,20 @@ public class HoursForecastAdapter extends RecyclerView.Adapter<HoursForecastAdap
 
     @Override
     public void onBindViewHolder(@NonNull HoursForecastAdapter.HoursForecastViewHolder holder, int position) {
-        holder.weatherIcon.setImageResource(R.drawable.ic_clear_sky);
+        Forecast forecast = mForecast.get(position);
 
-        holder.time.setText("12:00 PM");
+        int weatherImageIcon = WeatherUtils.getWeatherIcon(forecast.getWeathers().get(0).getIcon());
 
-        holder.temperature.setText("19°");
+        holder.weatherIcon.setImageResource(weatherImageIcon);
+
+        String hourClockString = CustomDateUtils.getHourOfDay(forecast.getDt());
+
+        holder.time.setText(hourClockString);
+
+        double highTemperature = forecast.getMain().getTempMax();
+        String highTemperatureString = mContext.getString(R.string.format_temperature, highTemperature);
+        holder.temperature.setText(highTemperatureString);
+
     }
 
     @Override

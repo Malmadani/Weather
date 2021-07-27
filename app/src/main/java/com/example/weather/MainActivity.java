@@ -9,9 +9,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import android.graphics.LinearGradient;
 import android.net.UrlQuerySanitizer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -27,6 +30,7 @@ import com.example.weather.Fragments.SecondaryWeatherInfoFragment;
 import com.example.weather.adapters.DaysForecastAdapter;
 import com.example.weather.adapters.HoursForecastAdapter;
 import com.example.weather.entity.Forecast;
+import com.example.weather.entity.ForecastLists;
 import com.example.weather.entity.WeatherInfo;
 import com.example.weather.network.NetworkUtils;
 import com.example.weather.utils.OpenWeatherDataParser;
@@ -53,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
 
     private NetworkUtils mNetworkUtils;
 
+    private static final String  TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,20 +83,15 @@ public class MainActivity extends AppCompatActivity {
         mDaysForecastRecycler.setLayoutManager(new LinearLayoutManager(this));
         mDaysForecastRecycler.setAdapter(daysAdapter);
 
-        List<Forecast> hoursForecast = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            hoursForecast.add(new Forecast());
-        }
-
-        List<Forecast> daysForecast = new ArrayList<>();
-        for (int i = 0; i< 7; i++){
-            daysForecast.add(new Forecast());
-        }
-
-        hoursAdapter.updateData(hoursForecast);
-        daysAdapter.updateData(daysForecast);
-
         requestWeatherInfo();
+        requestForecastInfo();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        mNetworkUtils.cancelRequests(TAG);
     }
 
     private void requestWeatherInfo(){
@@ -104,6 +105,7 @@ public class MainActivity extends AppCompatActivity {
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
+                        Log.d(TAG, "Forecasts Request Received!");
                         WeatherInfo weatherInfo = null;
                         try {
                             weatherInfo = OpenWeatherDataParser.getWeatherInfoObjectFormJson(response);
@@ -121,8 +123,87 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
+
+        weatherRequest.setTag(TAG);
+
         mNetworkUtils.addToRequestQueue(weatherRequest);
     }
+
+    private void requestForecastInfo(){
+        // The getForecastsUrl method will return the URL that we need to get the JSON for the upcoming forecasts
+        String forecastsRequestUrl = NetworkUtils.getForecastUrl(MainActivity.this).toString();
+
+        // Request a string response from the provided URL.
+        JsonObjectRequest forecastsListRequest = new JsonObjectRequest(Request.Method.GET, forecastsRequestUrl, null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d(TAG, "Forecasts Request Received");
+                        ForecastLists forecastLists = null;
+                        try {
+                            // Get ForecastLists object from json response
+                            forecastLists = OpenWeatherDataParser.getForecastInfoObjectFormJson(response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if (forecastLists != null
+                                && forecastLists.getHoursForecasts() != null
+                                && forecastLists.getDaysForecast() != null) {
+                            hoursAdapter.updateData(forecastLists.getHoursForecasts());
+                            daysAdapter.updateData(forecastLists.getDaysForecast());
+                            mHoursForecastRecycler.setVisibility(View.VISIBLE);
+                            mDaysForecastRecycler.setVisibility(View.VISIBLE);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Set tag to the request
+        forecastsListRequest.setTag(TAG);
+
+        // Add the request to the RequestQueue.
+        mNetworkUtils.addToRequestQueue(forecastsListRequest);
+    }
+
+    /**
+     * أنشاء دالة لتنفيذ الAsyncTask
+     *
+            public void requestWeatherInfo(){
+                new getRequestWeatherInfoFormUrl.execute();
+            }
+    **/
+
+    /**
+     * أستخراج البيانات وتخزينها في كلاس WeatherInfo
+     *
+                    class  getRequestWeatherInfoFormUrl extends AsyncTask<Void, Integer, WeatherInfo>{
+
+                        @Override
+                        protected WeatherInfo doInBackground(Void... voids) {
+                            URL weatherURL = NetworkUtils.getWeatherUrl(getBaseContext());
+                            WeatherInfo weatherInfo;
+                            try {
+                                String weatherJsonResponse = NetworkUtils.getResponseFromHttpUrl(weatherURL);
+                                weatherInfo = OpenWeatherDataParser.getWeatherInfoObjectFormJson(weatherJsonResponse);
+                                return weatherInfo;
+                            }catch (IOException | JSONException e){
+                                e.printStackTrace();
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(WeatherInfo weatherInfo) {
+                            super.onPostExecute(weatherInfo);
+                            if (weatherInfo != null){
+                                headerFragmentAdapter.ubdateData(weatherInfo);
+                            }
+                        }
+    **/
 
     class HeaderFragmentAdapter extends FragmentPagerAdapter{
 

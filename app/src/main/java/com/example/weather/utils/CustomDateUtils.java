@@ -111,6 +111,11 @@ public class CustomDateUtils {
         }
     }
 
+    public static String getHourOfDay(long timeInSeconds) {
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.ENGLISH);
+        return dateFormat.format(new Date(timeInSeconds * 1000));
+    }
+
     /**
      * Get hour of the day from UTC time in milliseconds
      *
