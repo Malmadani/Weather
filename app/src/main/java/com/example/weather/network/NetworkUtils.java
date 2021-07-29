@@ -1,18 +1,20 @@
 package com.example.weather.network;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+//import com.android.volley.Request;
+//import com.android.volley.RequestQueue;
+//import com.android.volley.toolbox.Volley;
 import com.example.weather.R;
+import com.example.weather.utils.SharedPreferencesHelper;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
+
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class NetworkUtils {
 
@@ -38,7 +40,7 @@ public class NetworkUtils {
     private static NetworkUtils sInstane;
     private static final Object LOCK = new Object();
 
-    private RequestQueue mRequestQueue;
+    //private RequestQueue mRequestQueue;
 
     public static NetworkUtils getInstance(Context context) {
         if (sInstane == null) {
@@ -49,56 +51,92 @@ public class NetworkUtils {
         return sInstane;
     }
 
-    public RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
-            mRequestQueue = new Volley().newRequestQueue(mContext);
-        }
-        return mRequestQueue;
-    }
+    /**
+     * public RequestQueue getRequestQueue() {
+     if (mRequestQueue == null) {
+     mRequestQueue = new Volley().newRequestQueue(mContext);
+     }
+     return mRequestQueue;
+     }
+     **/
+    /**
+     public <T> void addToRequestQueue(Request<T> request) {
+     getRequestQueue().add(request);
+     }
+     **/
+    /**
+     * public void cancelRequests(String tag) {
+     * getRequestQueue().cancelAll(tag);
+     * }
+     **/
 
-    public <T> void addToRequestQueue(Request<T> request) {
-        getRequestQueue().add(request);
-    }
-
-    public void cancelRequests(String tag) {
-        getRequestQueue().cancelAll(tag);
-    }
+    private OpenWeatherApiInterface mApiInterface;
 
     private NetworkUtils(Context context) {
         mContext = context.getApplicationContext();
-        mRequestQueue = getRequestQueue();
-    }
 
-    public static URL getWeatherUrl(Context context) {
-        return buildUrl(context, WEATHER_ENDPOINT);
-    }
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.level(HttpLoggingInterceptor.Level.BODY);
 
-    public static URL getForecastUrl(Context context) {
-        return buildUrl(context, FORECAST_ENDPOINT);
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
-    }
-
-    private static URL buildUrl(Context context, String endPoint) {
-        Uri.Builder uriBuldir = Uri.parse(BASE_URL + endPoint).buildUpon();
-        Uri uri = uriBuldir
-                .appendQueryParameter(QUERY_PARAM, context.getString(R.string.pref_location_default))
-                .appendQueryParameter(FORMAT_PARAM, FORMAT)
-                .appendQueryParameter(UNITS_PARAM, METRIC)
-                .appendQueryParameter(LANG_PARAM, Locale.getDefault().getLanguage())
-                .appendQueryParameter(APP_ID_PARAM, context.getString(R.string.api_key))
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
                 .build();
 
-        try {
-            URL url = new URL(uri.toString());
-            Log.d(TAG, "URL" + url);
-            return url;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
+        mApiInterface = retrofit.create(OpenWeatherApiInterface.class);
+        //mRequestQueue = getRequestQueue();
+    }
+
+    public OpenWeatherApiInterface getmApiInterface() {
+        return mApiInterface;
     }
 
     /**
+     * public static URL getWeatherUrl(Context context) {
+     * return buildUrl(context, WEATHER_ENDPOINT);
+     * }
+     * <p>
+     * public static URL getForecastUrl(Context context) {
+     * return buildUrl(context, FORECAST_ENDPOINT);
+     * <p>
+     * }
+     **/
+
+    public HashMap<String, String> getQueryMap() {
+        HashMap<String, String> map = new HashMap<>();
+        map.put(QUERY_PARAM, SharedPreferencesHelper.getPreferedWeatherLocation(mContext));
+        map.put(FORMAT_PARAM, FORMAT);
+        map.put(UNITS_PARAM, SharedPreferencesHelper.getPreferedMeasurementSystem(mContext));
+        map.put(LANG_PARAM, Locale.getDefault().getLanguage());
+        map.put(APP_ID_PARAM, mContext.getString(R.string.api_key));
+
+        return map;
+    }
+
+    /**
+     private static URL buildUrl(Context context, String endPoint) {
+     Uri.Builder uriBuldir = Uri.parse(BASE_URL + endPoint).buildUpon();
+     Uri uri = uriBuldir
+     .appendQueryParameter(QUERY_PARAM, SharedPreferencesHelper.getPreferedWeatherLocation(context))
+     .appendQueryParameter(FORMAT_PARAM, FORMAT)
+     .appendQueryParameter(UNITS_PARAM, SharedPreferencesHelper.getPreferedMeasurementSystem(context))
+     .appendQueryParameter(LANG_PARAM, Locale.getDefault().getLanguage())
+     .appendQueryParameter(APP_ID_PARAM, context.getString(R.string.api_key))
+     .build();
+
+     try {
+     URL url = new URL(uri.toString());
+     Log.d(TAG, "URL" + url);
+     return url;
+     } catch (MalformedURLException e) {
+     e.printStackTrace();
+     return null;
+     }
+     }
+
      //طلب الاتصال بالأنترنت باستخدام كلاس Http Url Connection
 
      public static String getResponseFromHttpUrl(URL url) throws IOException {
@@ -122,5 +160,5 @@ public class NetworkUtils {
      httpURLConnection.disconnect();
      }
      }
-     */
+     **/
 }

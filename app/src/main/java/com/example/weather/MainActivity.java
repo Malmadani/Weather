@@ -1,6 +1,7 @@
 package com.example.weather;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -10,47 +11,33 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
 import android.content.Intent;
-import android.graphics.LinearGradient;
-import android.media.audiofx.EnvironmentalReverb;
-import android.net.UrlQuerySanitizer;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.weather.Fragments.PrimaryWeatherInfoFragmnet;
 import com.example.weather.Fragments.SecondaryWeatherInfoFragment;
 import com.example.weather.adapters.DaysForecastAdapter;
 import com.example.weather.adapters.HoursForecastAdapter;
-import com.example.weather.entity.Forecast;
 import com.example.weather.entity.ForecastLists;
+import com.example.weather.entity.WeatherForecasts;
 import com.example.weather.entity.WeatherInfo;
 import com.example.weather.network.NetworkUtils;
 import com.example.weather.utils.OpenWeatherDataParser;
 import com.google.android.material.tabs.TabLayout;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_SETTINGS = 133;
     private HoursForecastAdapter hoursAdapter;
     private DaysForecastAdapter daysAdapter;
 
@@ -61,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
 
     private NetworkUtils mNetworkUtils;
+
+    private Call<WeatherInfo> mWeatherInfoCall;
+    private Call<WeatherForecasts> mForecastInfoCall;
 
     private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -89,15 +79,23 @@ public class MainActivity extends AppCompatActivity {
         mDaysForecastRecycler.setAdapter(daysAdapter);
 
         requestWeatherInfo();
-        requestForecastInfo();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        mNetworkUtils.cancelRequests(TAG);
+        mForecastInfoCall.cancel();
+        mWeatherInfoCall.cancel();
     }
+
+    /**
+            @Override
+            protected void onStop() {
+                super.onStop();
+                mNetworkUtils.cancelRequests(TAG);
+            }
+    **/
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -109,45 +107,94 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.settings) {
-            startActivity(new Intent(getBaseContext(), SettingsActivity.class));
+            startActivityForResult(new Intent(getBaseContext(), SettingsActivity.class), REQUEST_SETTINGS);
         }
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_SETTINGS && resultCode == RESULT_OK) {
+            requestWeatherInfo();
+            requestForecastInfo();
+        }
+    }
+
     private void requestWeatherInfo() {
-
-        String weatherRequestUrl = NetworkUtils.getWeatherUrl(MainActivity.this).toString();
-
-        JsonObjectRequest weatherRequest = new JsonObjectRequest(
-                Request.Method.GET,
-                weatherRequestUrl,
-                null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Log.d(TAG, "Forecasts Request Received!");
-                        WeatherInfo weatherInfo = null;
-                        try {
-                            weatherInfo = OpenWeatherDataParser.getWeatherInfoObjectFormJson(response);
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        if (weatherInfo != null) {
-                            headerFragmentAdapter.ubdateData(weatherInfo);
-                        }
-                    }
-                }, new Response.ErrorListener() {
+        mWeatherInfoCall = mNetworkUtils.getmApiInterface().getWeatherInfo(mNetworkUtils.getQueryMap());
+        mWeatherInfoCall.enqueue(new Callback<WeatherInfo>() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+            public void onResponse(Call<WeatherInfo> call, Response<WeatherInfo> response) {
+                if (response.code() == 200){
+                    WeatherInfo weatherInfo = response.body();
+                    headerFragmentAdapter.ubdateData(weatherInfo);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherInfo> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-
-        weatherRequest.setTag(TAG);
-
-        mNetworkUtils.addToRequestQueue(weatherRequest);
     }
+
+    private void requestForecastInfo() {
+        mForecastInfoCall = mNetworkUtils.getmApiInterface().getForecastInfo(mNetworkUtils.getQueryMap());
+        mForecastInfoCall.enqueue(new Callback<WeatherForecasts>() {
+            @Override
+            public void onResponse(Call<WeatherForecasts> call, Response<WeatherForecasts> response) {
+                if (response.code() == 200){
+                    WeatherForecasts weatherForecasts = response.body();
+                    ForecastLists forecastLists = OpenWeatherDataParser.getForecastsDataFromWeatherforecasts(weatherForecasts);
+                    hoursAdapter.updateData(forecastLists.getHoursForecasts());
+                    daysAdapter.updateData(forecastLists.getDaysForecast());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<WeatherForecasts> call, Throwable t) {
+                Toast.makeText(MainActivity.this, t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    /**
+            private void requestWeatherInfo() {
+
+                String weatherRequestUrl = NetworkUtils.getWeatherUrl(MainActivity.this).toString();
+
+                JsonObjectRequest weatherRequest = new JsonObjectRequest(
+                        Request.Method.GET,
+                        weatherRequestUrl,
+                        null,
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                Log.d(TAG, "Forecasts Request Received!");
+                                WeatherInfo weatherInfo = null;
+                                try {
+                                    weatherInfo = OpenWeatherDataParser.getWeatherInfoObjectFormJson(response);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                if (weatherInfo != null) {
+                                    headerFragmentAdapter.ubdateData(weatherInfo);
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getBaseContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+                weatherRequest.setTag(TAG);
+
+                mNetworkUtils.addToRequestQueue(weatherRequest);
+            }
+
 
     private void requestForecastInfo() {
         // The getForecastsUrl method will return the URL that we need to get the JSON for the upcoming forecasts

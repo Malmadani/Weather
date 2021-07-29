@@ -1,5 +1,6 @@
 package com.example.weather.Fragments;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -48,9 +49,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
 
-            } else {
-                preference.setSummary(value);
             }
+        }else {
+            preference.setSummary(value);
         }
     }
 
@@ -59,6 +60,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         Preference preference = findPreference(key);
         if (preference != null) {
             setPreferenceSummary(preference);
+        }
+
+        if (getActivity() != null){
+            getActivity().setResult(Activity.RESULT_OK);
         }
     }
 }

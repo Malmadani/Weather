@@ -6,6 +6,7 @@ import com.example.weather.entity.Forecast;
 import com.example.weather.entity.ForecastLists;
 import com.example.weather.entity.Main;
 import com.example.weather.entity.Weather;
+import com.example.weather.entity.WeatherForecasts;
 import com.example.weather.entity.WeatherInfo;
 import com.example.weather.entity.Wind;
 
@@ -98,15 +99,7 @@ public class OpenWeatherDataParser {
 
     }
 
-    public static ForecastLists getForecastInfoObjectFormJson(JSONObject forecastsJson) throws JSONException {
-
-        if (isError(forecastsJson)) {
-            return null;
-        }
-
-        JSONArray jsonForecastsArray = forecastsJson.getJSONArray(OWM_LIST);
-
-        Forecast forecast = new Forecast();
+    public static ForecastLists getForecastsDataFromWeatherforecasts(WeatherForecasts weatherForecasts){
 
         List<Forecast> hoursForecasts = new ArrayList<>();
         LinkedHashMap<String, List<Forecast>> daysForecasts = new LinkedHashMap<>();
@@ -115,39 +108,10 @@ public class OpenWeatherDataParser {
         String currentDay = df.format(new Date());
         int hoursForecastsCount = 0;
 
-        for (int i = 0; i < jsonForecastsArray.length(); i++) {
+        for (int i = 0; i < 40; i++) {
 
-            JSONObject singleForecastJson = jsonForecastsArray.getJSONObject(i);
-
-            // Weather description is in a child array called "weather", which is 1 element long.
-            JSONObject weatherObject = singleForecastJson.getJSONArray(OWM_WEATHER).getJSONObject(0);
-
-            // Temperatures are sent by OpenWeatherMap in a child object called Main
-            JSONObject mainObject = singleForecastJson.getJSONObject(OWM_MAIN);
-
-            // Wind speed and direction are wrapped in a Wind object
-            JSONObject windObject = singleForecastJson.getJSONObject(OWM_WIND);
-
-            forecast.setDt(singleForecastJson.getLong(OWM_DATE));
-            forecast.setName(singleForecastJson.getString(OWM_DATE_TEXT));
-            Main main = new Main();
-            main.setTemp(mainObject.getDouble(OWM_TEMPERATURE));
-            main.setTempMax(mainObject.getDouble(OWM_MAX));
-            main.setTempMin(mainObject.getDouble(OWM_MIN));
-            main.setHumidity(mainObject.getInt(OWM_HUMIDITY));
-            main.setPressure(mainObject.getLong(OWM_PRESSURE));
-            forecast.setMain(main);
-            Wind wind = new Wind();
-            wind.setSpeed(windObject.getDouble(OWM_WINDSPEED));
-            wind.setDeg(windObject.getLong(OWM_WIND_DIRECTION));
-            forecast.setWind(wind);
-            Weather weather = new Weather();
-            weather.setDescription(weatherObject.getString(OWM_WEATHER_DESCRIPTION));
-            weather.setIcon(weatherObject.getString(OWM_WEATHER_ICON));
-            List<Weather> weatherList = new ArrayList<>();
-            weatherList.add(weather);
-            forecast.setWeathers(weatherList);
-
+            Forecast forecast;
+            forecast = weatherForecasts.getForecasts().get(i);
 
             if (hoursForecastsCount++ < 8) {
                 hoursForecasts.add(forecast);
@@ -178,4 +142,87 @@ public class OpenWeatherDataParser {
 
         return forecastsData;
     }
+
+    /**
+            public static ForecastLists getForecastInfoObjectFormJson(JSONObject forecastsJson) throws JSONException {
+
+                if (isError(forecastsJson)) {
+                    return null;
+                }
+
+                JSONArray jsonForecastsArray = forecastsJson.getJSONArray(OWM_LIST);
+
+                Forecast forecast = new Forecast();
+
+                List<Forecast> hoursForecasts = new ArrayList<>();
+                LinkedHashMap<String, List<Forecast>> daysForecasts = new LinkedHashMap<>();
+
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+                String currentDay = df.format(new Date());
+                int hoursForecastsCount = 0;
+
+                for (int i = 0; i < jsonForecastsArray.length(); i++) {
+
+                    JSONObject singleForecastJson = jsonForecastsArray.getJSONObject(i);
+
+                    // Weather description is in a child array called "weather", which is 1 element long.
+                    JSONObject weatherObject = singleForecastJson.getJSONArray(OWM_WEATHER).getJSONObject(0);
+
+                    // Temperatures are sent by OpenWeatherMap in a child object called Main
+                    JSONObject mainObject = singleForecastJson.getJSONObject(OWM_MAIN);
+
+                    // Wind speed and direction are wrapped in a Wind object
+                    JSONObject windObject = singleForecastJson.getJSONObject(OWM_WIND);
+
+                    forecast.setDt(singleForecastJson.getLong(OWM_DATE));
+                    forecast.setName(singleForecastJson.getString(OWM_DATE_TEXT));
+                    Main main = new Main();
+                    main.setTemp(mainObject.getDouble(OWM_TEMPERATURE));
+                    main.setTempMax(mainObject.getDouble(OWM_MAX));
+                    main.setTempMin(mainObject.getDouble(OWM_MIN));
+                    main.setHumidity(mainObject.getInt(OWM_HUMIDITY));
+                    main.setPressure(mainObject.getLong(OWM_PRESSURE));
+                    forecast.setMain(main);
+                    Wind wind = new Wind();
+                    wind.setSpeed(windObject.getDouble(OWM_WINDSPEED));
+                    wind.setDeg(windObject.getLong(OWM_WIND_DIRECTION));
+                    forecast.setWind(wind);
+                    Weather weather = new Weather();
+                    weather.setDescription(weatherObject.getString(OWM_WEATHER_DESCRIPTION));
+                    weather.setIcon(weatherObject.getString(OWM_WEATHER_ICON));
+                    List<Weather> weatherList = new ArrayList<>();
+                    weatherList.add(weather);
+                    forecast.setWeathers(weatherList);
+
+
+                    if (hoursForecastsCount++ < 8) {
+                        hoursForecasts.add(forecast);
+                    }
+
+                    String date = forecast.getName().split(" ")[0];
+
+                    if (!date.equals(currentDay)) {
+                        if (daysForecasts.containsKey(date)) {
+                            List<Forecast> forecasts = daysForecasts.get(date);
+                            assert forecasts != null;
+                            forecasts.add(forecast);
+                        } else {
+                            List<Forecast> forecasts = new ArrayList<>();
+                            forecasts.add(forecast);
+                            daysForecasts.put(date, forecasts);
+                        }
+                    }
+                }
+
+                ForecastLists forecastsData = new ForecastLists();
+                forecastsData.setHoursForecasts(hoursForecasts);
+                List<List<Forecast>> listOfDaysForecasts = new ArrayList<>();
+                for (Map.Entry entry : daysForecasts.entrySet()) {
+                    listOfDaysForecasts.add((List<Forecast>) entry.getValue());
+                }
+                forecastsData.setDaysForecast(listOfDaysForecasts);
+
+                return forecastsData;
+            }
+     **/
 }
